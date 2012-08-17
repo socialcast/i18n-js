@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module I18n
   module JS
     class Middleware
@@ -52,7 +54,52 @@ module I18n
           file << new_cache.to_yaml
         end
 
-        ::I18n::JS.export
+        self.class.config_per_translation do |filename, translation_scope|
+          self.class.save(filename, I18n::Js::Translator.new(translation_scope))
+        end
+      end
+      def self.save(file, translator)
+        FileUtils.mkdir_p File.dirname(file)
+
+        files_to_save = if file =~ ::I18n::INTERPOLATION_PATTERN
+          ::I18n.available_locales.map do |locale|
+            {
+              :file => ::I18n.interpolate(file, {:locale => locale}),
+              :translations => translator.translations[locale]
+            }
+          end
+        else
+          [{
+            :file => file,
+            :translations => translator.translations
+          }]
+        end
+
+        files_to_save.each do |file_to_save|
+          File.open(file_to_save[:file], "w+") do |f|
+            f << %(I18n.translations = );
+            f << file_to_save[:translations].to_json
+            f << %(;)
+          end
+        end
+      end
+      def self.config_file
+        "config/i18n-js.yml"
+      end
+      def self.config
+        @@config ||= if config?
+          (YAML.load_file(config_file) || {}).with_indifferent_access
+        else
+          {"public/javascripts/translations.js" => "*"}
+        end
+      end
+      def self.config?
+        File.file?(config_file)
+      end
+      def self.config_per_translation
+        config.each_pair do |filename, translation_scope|
+          yield filename, translation_scope
+        end
       end
     end
   end
