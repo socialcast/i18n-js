@@ -1,5 +1,5 @@
 module I18n
-  module JS
+  module Js
     module Version
       MAJOR = 3
       MINOR = 0

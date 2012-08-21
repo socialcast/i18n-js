@@ -1,0 +1,8 @@
+## PROJECT::GENERAL
+coverage
+rdoc
+pkg
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
