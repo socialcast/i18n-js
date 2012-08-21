@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "i18n"
   s.add_dependency "activesupport", ">= 3.0.0"
-  s.add_dependency "railtie", ">= 3.0.0"
+  s.add_dependency "railties", ">= 3.0.0"
   s.add_dependency "sprockets", ">= 2.0.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
