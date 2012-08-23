@@ -11,6 +11,8 @@
 //
 // See tests for specific formatting like numbers and dates.
 //
+var I18n = {};
+
 ;(function(I18n){
   "use strict";
 
@@ -169,19 +171,19 @@
       scopes = scope.split(this.defaultSeparator);
       translations = this.translations[locale];
 
-      if (!translations) {
+      if (typeof translations === "undefined") {
         continue;
       }
 
       while (scopes.length) {
         translations = translations[scopes.shift()];
 
-        if (!translations) {
+        if (typeof translations === "undefined") {
           break;
         }
       }
 
-      if (translations) {
+      if (typeof translations !== "undefined") {
         return translations;
       }
     }
@@ -230,7 +232,7 @@
     options = this.prepareOptions(options);
     var translation = this.lookup(scope, options);
 
-    if (!translation) {
+    if (typeof translation === "undefined") {
       return this.missingTranslation(scope);
     }
 
@@ -286,7 +288,7 @@
       translations = this.lookup(scope, options);
     }
 
-    if (!translations) {
+    if (typeof translations === "undefined") {
       return this.missingTranslation(scope);
     }
 
@@ -658,8 +660,13 @@
   I18n.t = I18n.translate;
   I18n.l = I18n.localize;
   I18n.p = I18n.pluralize;
-})(typeof(exports) === "undefined" ? this["I18n"] = {} : exports);
+})(I18n);
 
+if(typeof exports === "undefined"){
+  this.I18n = I18n;
+} else {
+  module.exports = I18n;
+}
 // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
 if (!Array.prototype.indexOf) {
   Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
