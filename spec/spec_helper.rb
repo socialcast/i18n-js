@@ -2,7 +2,7 @@ require "i18n"
 require "json"
 
 require "active_support/all"
-require "i18n/js"
+require "i18n-js"
 
 module Helpers
   # Set the configuration as the current one
@@ -13,7 +13,7 @@ module Helpers
 
   # Shortcut to I18n::Js.translations
   def translations
-    I18n::Js.translations
+    I18n::Js::Translator.translations
   end
 
   def file_should_exist(name)

@@ -4,29 +4,29 @@ module I18n
       attr_accessor :scopes, :translations
       def initialize(scopes)
         @scopes = scopes
-        @translations = segment_for_scope(@scopes)
+        @translations = self.class.segment_for_scope(@scopes)
       end
 
-      def segment_for_scope(scope)
+      def self.segment_for_scope(scope)
         if scope == "*"
-          self.class.translations
+          translations
         else
           scoped_translations(scope)
         end
       end
 
-      def scoped_translations(scopes) # :nodoc:
+      def self.scoped_translations(scopes) # :nodoc:
         result = {}
 
         [scopes].flatten.each do |scope|
-          result.deep_merge!(filter(self.class.translations, scope))
+          result.deep_merge!(filter(translations, scope))
         end
 
         result
       end
 
       # Filter translations according to the specified scope.
-      def filter(filter_translations, scopes)
+      def self.filter(filter_translations, scopes)
         scopes = scopes.split(".") if scopes.is_a?(String)
         scopes = scopes.clone
         scope = scopes.shift
