@@ -1,15 +1,9 @@
+//= require underscore
+
 // I18n.js
 // =======
 //
 // This small library provides the Rails I18n API on the Javascript.
-// You don't actually have to use Rails (or even Ruby) to use I18n.js.
-// Just make sure you export all translations in an object like this:
-//
-//     I18n.translations.en = {
-//       hello: "Hello World"
-//     };
-//
-// See tests for specific formatting like numbers and dates.
 //
 var I18n = {};
 
@@ -60,11 +54,11 @@ var I18n = {};
   I18n.locales.get = function(locale) {
     var result = this[locale] || this[I18n.locale] || this["default"];
 
-    if (typeof(result) === "function") {
+    if (_.isFunction(result)) {
       result = result(locale);
     }
 
-    if (result instanceof Array === false) {
+    if (!_.isArray(result)) {
       result = [result];
     }
 
@@ -101,11 +95,11 @@ var I18n = {};
     locales.forEach(function(locale){
       countryCode = locale.split("-")[0];
 
-      if (!~list.indexOf(locale)) {
+      if (!_.include(list, locale)) {
         list.push(locale);
       }
 
-      if (I18n.fallbacks && countryCode && countryCode !== locale && !~list.indexOf(countryCode)) {
+      if (I18n.fallbacks && countryCode && countryCode !== locale && !_.include(list, countryCode)) {
         list.push(countryCode);
       }
     });
@@ -150,7 +144,7 @@ var I18n = {};
 
   // Check if value is different than undefined and null;
   I18n.isSet = function(value) {
-    return value !== undefined && value !== null;
+    return !_.isUndefined(value) && !_.isNull(value);
   };
 
   // Find and process the translation using the provided scope and options.
@@ -171,19 +165,19 @@ var I18n = {};
       scopes = scope.split(this.defaultSeparator);
       translations = this.translations[locale];
 
-      if (typeof translations === "undefined") {
+      if (_.isUndefined(translations)) {
         continue;
       }
 
       while (scopes.length) {
         translations = translations[scopes.shift()];
 
-        if (typeof translations === "undefined") {
+        if (_.isUndefined(translations)) {
           break;
         }
       }
 
-      if (typeof translations !== "undefined") {
+      if (!_.isUndefined(translations)) {
         return translations;
       }
     }
@@ -207,12 +201,12 @@ var I18n = {};
     for (var i = 0, count = args.length; i < count; i++) {
       var o = args.shift();
 
-      if (typeof(o) != "object") {
+      if (!_.isObject(o)) {
         continue;
       }
 
       for (var attr in o) {
-        if (!o.hasOwnProperty(attr)) {
+        if (!_.has(o, attr)) {
           continue;
         }
 
@@ -232,13 +226,13 @@ var I18n = {};
     options = this.prepareOptions(options);
     var translation = this.lookup(scope, options);
 
-    if (typeof translation === "undefined") {
+    if (_.isUndefined(translation)) {
       return this.missingTranslation(scope);
     }
 
-    if (typeof(translation) === "string") {
+    if (_.isString(translation)) {
       translation = this.interpolate(translation, options);
-    } else if (translation instanceof Object && this.isSet(options.count)) {
+    } else if (_.isObject(translation) && this.isSet(options.count)) {
       translation = this.pluralize(options.count, translation, options);
     }
 
@@ -282,13 +276,13 @@ var I18n = {};
     options = this.prepareOptions(options);
     var translations, pluralizer, keys, key, message;
 
-    if (scope instanceof Object) {
+    if (_.isObject(scope)) {
       translations = scope;
     } else {
       translations = this.lookup(scope, options);
     }
 
-    if (typeof translations === "undefined") {
+    if (_.isUndefined(translations)) {
       return this.missingTranslation(scope);
     }
 
@@ -452,7 +446,7 @@ var I18n = {};
     var matches, convertedDate;
 
     // we have a date, so just return it.
-    if (typeof(date) == "object") {
+    if (_.isDate(date)) {
       return date;
     };
 
@@ -662,45 +656,6 @@ var I18n = {};
   I18n.p = I18n.pluralize;
 })(I18n);
 
-if(typeof exports === "undefined"){
-  this.I18n = I18n;
-} else {
+if(!_.isUndefined(exports)){
   module.exports = I18n;
 }
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
-    "use strict";
-
-    if (this === void 0 || this === null)
-      throw new TypeError();
-
-    var t = Object(this);
-    var len = t.length >>> 0;
-    if (len === 0)
-      return -1;
-
-    var n = 0;
-    if (arguments.length > 0) {
-      n = Number(arguments[1]);
-      if (n !== n) // shortcut for verifying if it's NaN
-        n = 0;
-      else if (n !== 0 && n !== (Infinity) && n !== -(Infinity))
-        n = (n > 0 || -1) * Math.floor(Math.abs(n));
-    }
-
-    if (n >= len)
-      return -1;
-
-    var k = n >= 0
-          ? n
-          : Math.max(len - Math.abs(n), 0);
-
-    for (; k < len; k++) {
-      if (k in t && t[k] === searchElement)
-        return k;
-    }
-    return -1;
-  };
-}
-;
