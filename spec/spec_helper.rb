@@ -2,22 +2,22 @@ require "i18n"
 require "json"
 
 require "active_support/all"
-require "i18n/js"
+require "i18n-js"
 
 module Helpers
   # Set the configuration as the current one
   def set_config(path)
     config = HashWithIndifferentAccess.new(YAML.load_file(File.dirname(__FILE__) + "/fixtures/#{path}"))
-    I18n::JS.stub(:config? => true, :config => config)
+    I18n::Js.stub(:config? => true, :config => config)
   end
 
-  # Shortcut to I18n::JS.translations
+  # Shortcut to I18n::Js.translations
   def translations
-    I18n::JS.translations
+    I18n::Js::Translator.translations
   end
 
   def file_should_exist(name)
-    file_path = File.join(I18n::JS.export_dir, name)
+    file_path = File.join(I18n::Js.export_dir, name)
     File.should be_file(file_path)
   end
 
@@ -38,4 +38,3 @@ RSpec.configure do |config|
 
   config.include Helpers
 end
-

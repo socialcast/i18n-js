@@ -1,5 +1,5 @@
-module I18n
-  module JS
+module SimplesIdeias
+  module I18n
     class Middleware
       def initialize(app)
         @app = app
@@ -46,13 +46,13 @@ module I18n
           new_cache[path] = changed_at
         end
 
-        return if valid_cache.all?
+        unless valid_cache.all?
+          File.open(cache_path, "w+") do |file|
+            file << new_cache.to_yaml
+          end
 
-        File.open(cache_path, "w+") do |file|
-          file << new_cache.to_yaml
+          SimplesIdeias::I18n.export!
         end
-
-        ::I18n::JS.export
       end
     end
   end

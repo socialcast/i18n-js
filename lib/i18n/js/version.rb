@@ -1,10 +1,10 @@
 module I18n
-  module JS
+  module Js
     module Version
-      MAJOR = 3
+      MAJOR = 4
       MINOR = 0
       PATCH = 0
-      STRING = "#{MAJOR}.#{MINOR}.#{PATCH}.rc2"
+      STRING = "#{MAJOR}.#{MINOR}.#{PATCH}.rc1"
     end
   end
 end
