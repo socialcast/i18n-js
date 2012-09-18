@@ -4,7 +4,7 @@ require "i18n/js/version"
 
 Gem::Specification.new do |s|
   s.name        = "i18n-js"
-  s.version     = I18n::JS::Version::STRING
+  s.version     = I18n::Js::Version::STRING
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Nando Vieira"]
   s.email       = ["fnando.vieira@gmail.com"]
@@ -18,7 +18,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "i18n"
-  s.add_development_dependency "activesupport"
+  s.add_dependency "activesupport", ">= 3.0.0"
+  s.add_dependency "railties", ">= 3.0.0"
+  s.add_dependency "sprockets", ">= 2.0.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
   s.add_development_dependency "pry"

@@ -4,7 +4,7 @@
 
     Translations.en = {
         hello: "Hello World!"
-
+      , empty: ""
       , greetings: {
             stranger: "Hello stranger!"
           , name: "Hello {{name}}!"

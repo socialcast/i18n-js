@@ -1,0 +1,13 @@
+## PROJECT::GENERAL
+coverage
+rdoc
+pkg
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+doc
+pkg
+spec/tmp
+.DS_Store
+

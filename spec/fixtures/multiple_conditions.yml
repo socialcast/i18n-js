@@ -1,5 +1,3 @@
-translations:
-  - file: "tmp/i18n-js/bitsnpieces.js"
-    only:
-      - "*.date.formats"
-      - "*.number.currency"
+only:
+  - "*.date.formats"
+  - "*.number.currency"
