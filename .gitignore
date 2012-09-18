@@ -6,3 +6,8 @@ pkg
 .bundle
 Gemfile.lock
 pkg/*
+doc
+pkg
+spec/tmp
+.DS_Store
+
