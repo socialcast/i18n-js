@@ -1,9 +1,6 @@
-<%# encoding: utf-8%>
-
-<% SimplesIdeias::I18n.assert_usable_configuration! %>
-var I18n = I18n || {};
-I18n.translations = <%=
-  SimplesIdeias::I18n.translation_segments.each_with_object({}) do |(name, segment),translations|
-    translations.merge!(segment)
-  end.to_json
-%>;
+//= require i18n
+//= require_self
+<%# encoding: utf-8 %>
+<% translations = I18n::Js::Translator.new(I18n::Js.config[:only]).translations %>
+<% scoped_translation = translations.select { |locale, value| [nil, locale.to_s].include?(__FILE__[/translation\-(\w*)/,1]) } %>
+;I18n.translations = <%= scoped_translation.to_json %>;
