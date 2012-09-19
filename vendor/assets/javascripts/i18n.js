@@ -656,6 +656,6 @@ var I18n = {};
   I18n.p = I18n.pluralize;
 })(I18n);
 
-if(!_.isUndefined(exports)){
+if(typeof exports !== 'undefined'){
   module.exports = I18n;
 }
