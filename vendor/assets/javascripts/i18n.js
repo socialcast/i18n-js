@@ -1,5 +1,3 @@
-//= require underscore
-
 // I18n.js
 // =======
 //
@@ -54,11 +52,11 @@ var I18n = {};
   I18n.locales.get = function(locale) {
     var result = this[locale] || this[I18n.locale] || this["default"];
 
-    if (_.isFunction(result)) {
+    if (Object.prototype.toString.call(result) == '[object Function]') {
       result = result(locale);
     }
 
-    if (!_.isArray(result)) {
+    if (Object.prototype.toString.call(result) != '[object Array]') {
       result = [result];
     }
 
@@ -95,11 +93,11 @@ var I18n = {};
     locales.forEach(function(locale){
       countryCode = locale.split("-")[0];
 
-      if (!_.include(list, locale)) {
+      if (!~list.indexOf(locale)) {
         list.push(locale);
       }
 
-      if (I18n.fallbacks && countryCode && countryCode !== locale && !_.include(list, countryCode)) {
+      if (I18n.fallbacks && countryCode && countryCode !== locale && !~list.indexOf(countryCode)) {
         list.push(countryCode);
       }
     });
@@ -144,7 +142,7 @@ var I18n = {};
 
   // Check if value is different than undefined and null;
   I18n.isSet = function(value) {
-    return !_.isUndefined(value) && !_.isNull(value);
+    return value !== void 0 && value !== null;
   };
 
   // Find and process the translation using the provided scope and options.
@@ -165,19 +163,19 @@ var I18n = {};
       scopes = scope.split(this.defaultSeparator);
       translations = this.translations[locale];
 
-      if (_.isUndefined(translations)) {
+      if (translations === void 0) {
         continue;
       }
 
       while (scopes.length) {
         translations = translations[scopes.shift()];
 
-        if (_.isUndefined(translations)) {
+        if (translations === void 0) {
           break;
         }
       }
 
-      if (!_.isUndefined(translations)) {
+      if (translations !== void 0) {
         return translations;
       }
     }
@@ -201,12 +199,12 @@ var I18n = {};
     for (var i = 0, count = args.length; i < count; i++) {
       var o = args.shift();
 
-      if (!_.isObject(o)) {
+      if (o !== Object(o)) {
         continue;
       }
 
       for (var attr in o) {
-        if (!_.has(o, attr)) {
+        if (!hasOwnProperty.call(o, attr)) {
           continue;
         }
 
@@ -226,13 +224,13 @@ var I18n = {};
     options = this.prepareOptions(options);
     var translation = this.lookup(scope, options);
 
-    if (_.isUndefined(translation)) {
+    if (translation === void 0) {
       return this.missingTranslation(scope);
     }
 
-    if (_.isString(translation)) {
+    if (Object.prototype.toString.call(translation) == '[object String]') {
       translation = this.interpolate(translation, options);
-    } else if (_.isObject(translation) && this.isSet(options.count)) {
+    } else if (translation === Object(translation) && this.isSet(options.count)) {
       translation = this.pluralize(options.count, translation, options);
     }
 
@@ -276,13 +274,13 @@ var I18n = {};
     options = this.prepareOptions(options);
     var translations, pluralizer, keys, key, message;
 
-    if (_.isObject(scope)) {
+    if (scope === Object(scope)) {
       translations = scope;
     } else {
       translations = this.lookup(scope, options);
     }
 
-    if (_.isUndefined(translations)) {
+    if (translations === void 0) {
       return this.missingTranslation(scope);
     }
 
@@ -446,7 +444,7 @@ var I18n = {};
     var matches, convertedDate;
 
     // we have a date, so just return it.
-    if (_.isDate(date)) {
+    if (Object.prototype.toString.call(date) == '[object Date]') {
       return date;
     };
 
@@ -658,4 +656,41 @@ var I18n = {};
 
 if(typeof exports !== 'undefined'){
   module.exports = I18n;
+}
+
+// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
+    "use strict";
+
+    if (this === void 0 || this === null)
+      throw new TypeError();
+
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (len === 0)
+      return -1;
+
+    var n = 0;
+    if (arguments.length > 0) {
+      n = Number(arguments[1]);
+      if (n !== n) // shortcut for verifying if it's NaN
+        n = 0;
+      else if (n !== 0 && n !== (Infinity) && n !== -(Infinity))
+        n = (n > 0 || -1) * Math.floor(Math.abs(n));
+    }
+
+    if (n >= len)
+      return -1;
+
+    var k = n >= 0
+          ? n
+          : Math.max(len - Math.abs(n), 0);
+
+    for (; k < len; k++) {
+      if (k in t && t[k] === searchElement)
+        return k;
+    }
+    return -1;
+  };
 }
