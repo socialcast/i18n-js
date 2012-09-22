@@ -4,7 +4,7 @@ module I18n
       attr_accessor :scopes, :translations
       def initialize(scopes)
         @scopes = scopes
-        @translations = self.class.segment_for_scope(@scopes)
+        @translations = self.class.deep_hash_key_sort(self.class.segment_for_scope(@scopes))
       end
 
       def self.segment_for_scope(scope)
@@ -50,6 +50,16 @@ module I18n
           init_translations unless initialized?
           translations
         end
+      end
+
+      protected
+
+      def self.deep_hash_key_sort hash
+        ret = hash.inject({}) do |h, (k, v)|
+          h[k] = v.is_a?(Hash) ? deep_hash_key_sort(v) :  v
+          h
+        end
+        Hash[ret.sort]
       end
     end
   end
