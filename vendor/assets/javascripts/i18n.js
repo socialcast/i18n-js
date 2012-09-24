@@ -90,8 +90,10 @@ var I18n = {};
     // Compute each locale with its country code.
     // So this will return an array containing both
     // `de-DE` and `de` locales.
-    locales.forEach(function(locale){
-      countryCode = locale.split("-")[0];
+    var localeLength = locales.length;
+    for (var i = localeLength - 1; i >= 0; i--) {
+      var locale = locales[i];
+      var countryCode = locale.split("-")[0];
 
       if (!~list.indexOf(locale)) {
         list.push(locale);
@@ -100,7 +102,7 @@ var I18n = {};
       if (I18n.fallbacks && countryCode && countryCode !== locale && !~list.indexOf(countryCode)) {
         list.push(countryCode);
       }
-    });
+    };
 
     // No locales set? English it is.
     if (!locales.length) {
