@@ -206,7 +206,7 @@ var I18n = {};
       }
 
       for (var attr in o) {
-        if (!hasOwnProperty.call(o, attr)) {
+        if (!Object.prototype.hasOwnProperty.call(o, attr)) {
           continue;
         }
 
