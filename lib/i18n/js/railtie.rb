@@ -11,7 +11,12 @@ module I18n
         load "tasks/i18n-js.rake"
       end
       initializer "i18n-js.assetpipeline.environment", :after => "sprockets.environment" do |app|
-        app.assets.register_preprocessor("application/javascript", FileDependencyProcessor) if app.config.assets.enabled
+        next unless app.config.assets.enabled
+        app.config.assets.configure do |config|
+          config.register_preprocessor("application/javascript", :"i18n-js_dependencies") do |context, source|
+            FileDependencyProcessor.evaluate(context, source)
+          end
+        end
       end
     end
   end
