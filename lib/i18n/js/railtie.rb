@@ -13,9 +13,7 @@ module I18n
       initializer "i18n-js.assetpipeline.environment", :after => "sprockets.environment" do |app|
         next unless app.config.assets.enabled
         app.config.assets.configure do |config|
-          config.register_preprocessor("application/javascript", :"i18n-js_dependencies") do |context, source|
-            FileDependencyProcessor.evaluate(context, source)
-          end
+          config.register_preprocessor('application/javascript', FileDependencyProcessor)
         end
       end
     end
