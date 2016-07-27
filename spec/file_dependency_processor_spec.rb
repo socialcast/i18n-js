@@ -47,7 +47,7 @@ describe I18n::Js::FileDependencyProcessor do
     end
   end
 
-  describe "#asset_path_regexp" do
+  describe ".asset_path_regexp" do
     it "returns a regex of asset_path" do
       expect(I18n::Js::FileDependencyProcessor.asset_path_regexp).to eq %r{i18n/translation}
     end
