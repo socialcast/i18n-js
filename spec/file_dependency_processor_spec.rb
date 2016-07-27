@@ -2,31 +2,54 @@ require "spec_helper"
 require 'i18n/js/file_dependency_processor'
 
 describe I18n::Js::FileDependencyProcessor do
-  context "#evaluate" do
+  describe '.call' do
+    subject(:process_dependencies) { dependency_processor.call(input) }
     let(:dependency_processor) { I18n::Js::FileDependencyProcessor }
-    it "sets dependencies on the I18n load_paths and the I18n::Js config file" do
-      ::I18n.stub(:load_path => ["/path/to/en.yml", "/path/to/es.yml"])
-      I18n::Js.stub(:config_path => "/path/to/i18n/js/config.yml")
-      context = double("context")
-      context.should_receive(:logical_path).and_return("i18n/translation-en.js")
-      context.should_receive(:depend_on).with("/path/to/en.yml")
-      context.should_receive(:depend_on).with("/path/to/es.yml")
-      context.should_receive(:depend_on).with("/path/to/i18n/js/config.yml")
-      source = double("source")
-      dependency_processor.evaluate(context, source)
+    let(:context_class) do
+      Class.new do
+        def initialize(input); end
+        def depend_on(path); end
+      end
     end
-    it "skips setting dependencies when the logical path doesn't match the asset_path_regexp" do
-      I18n::Js.stub(:config_path => "/path/to/i18n/js/config.yml")
-      context = double("context")
-      context.should_receive(:logical_path).and_return("not_i18n_translation.js")
-      context.should_not_receive(:depend_on)
-      source = double("source")
-      dependency_processor.evaluate(context, source)
+    before { stub_const('ContextClass', context_class) }
+    let(:environment) { double('environment', :context_class => context_class) }
+    context 'when the path matches the asset_path_regexp' do
+      let(:input) do
+        {
+          :filename => 'i18n/translation-en.js',
+          :source => double('source'),
+          :environment => environment
+        }
+      end
+      it 'sets dependencies on the I18n load_paths and the I18n::Js config file' do
+        allow(::I18n).to receive(:load_path).and_return(['/path/to/en.yml', '/path/to/es.yml'])
+        allow(I18n::Js).to receive(:config_path).and_return('/path/to/i18n/js/config.yml')
+        expect_any_instance_of(ContextClass).to receive(:depend_on).with('/path/to/en.yml')
+        expect_any_instance_of(ContextClass).to receive(:depend_on).with('/path/to/es.yml')
+        expect_any_instance_of(ContextClass).to receive(:depend_on).with('/path/to/i18n/js/config.yml')
+        process_dependencies
+      end
+    end
+    context 'when the path does not match the asset_path_regexp' do
+      let(:input) do
+        {
+          :filename => 'not_i18n_translation.js',
+          :source => double('source'),
+          :environment => environment
+        }
+      end
+      it 'does not set additional dependencies' do
+        allow(::I18n).to receive(:load_path).and_return(['/path/to/en.yml', '/path/to/es.yml'])
+        allow(I18n::Js).to receive(:config_path).and_return('/path/to/i18n/js/config.yml')
+        expect_any_instance_of(ContextClass).to_not receive(:depend_on)
+        process_dependencies
+      end
     end
   end
-  context "#asset_path_regexp" do
+
+  describe ".asset_path_regexp" do
     it "returns a regex of asset_path" do
-      I18n::Js::FileDependencyProcessor.asset_path_regexp.should eql(%r{i18n/translation})
+      expect(I18n::Js::FileDependencyProcessor.asset_path_regexp).to eq %r{i18n/translation}
     end
   end
 end

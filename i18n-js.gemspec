@@ -18,9 +18,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "i18n"
-  s.add_dependency "activesupport", ">= 3.0.0"
-  s.add_dependency "railties", ">= 3.0.0"
-  s.add_dependency "sprockets", ">= 2.0.0"
+  s.add_dependency "activesupport", ">= 4.0.0"
+  s.add_dependency "railties", ">= 4.0.0"
+  s.add_dependency "sprockets", ">= 3.0.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
   s.add_development_dependency "pry"
