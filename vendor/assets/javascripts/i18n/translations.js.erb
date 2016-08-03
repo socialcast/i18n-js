@@ -1,3 +1,4 @@
 //= require i18n
 <%#encoding: utf-8 %>
+<% [I18n.load_path, I18n::Js.config_path].flatten.each { |path| depend_on path } %>
 ;I18n.translations = <%=  I18n::Js::StaticAssetRenderer.json_for_locale(I18n::Js::StaticAssetRenderer.extract_locale_from_filename(__FILE__)) %>;
